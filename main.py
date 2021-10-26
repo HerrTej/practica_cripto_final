@@ -9,14 +9,14 @@ import os
 def borrar_archivos(file):
     if os.path.exists(file):
         os.remove(file)
-my_file_keys = str(Path.home()) + "/PyCharmProjects/pythonProject/keys.json"
-my_file_encriptada = str(Path.home()) + "/PyCharmProjects/pythonProject/base_encriptada.json"
-file_datos = str(Path.home()) + "/PyCharmProjects/pythonProject/base_datos.json"
-my_file_final = str(Path.home()) + "/PyCharmProjects/pythonProject/base_desencriptada.json"
+my_file_keys = str(Path.home()) + "/PyCharmProjects/practica_cripto_final/keys.json"
+my_file_encriptada = str(Path.home()) + "/PyCharmProjects/practica_cripto_final/base_encriptada.json"
+file_datos = str(Path.home()) + "/PyCharmProjects/practica_cripto_final/base_datos.json"
+
 
 borrar_archivos(my_file_keys)
 borrar_archivos(my_file_encriptada)
-borrar_archivos(my_file_final)
+
 with open(file_datos, "r", encoding="utf-8", newline="") as file:
     resultado = json.load(file)
     file.close()
@@ -84,6 +84,8 @@ except FileExistsError:
         json.dump(data, file, indent=2)
         file.close()
 
+borrar_archivos(file_datos)
+
 # DESENCRIPTAR
 # ----------------------------------------------------------------------------------------------------------------------------------
 
@@ -136,19 +138,19 @@ for diccionario_encriptado in desencriptados:
 
 
 try:
-    with open(my_file_final, "x", encoding="utf-8", newline="") as file:
+    with open(file_datos, "x", encoding="utf-8", newline="") as file:
         data = []
         for item in lista_desencriptados:
             data.append(item)
         json.dump(data, file, indent=2)
         file.close()
 except FileExistsError:
-    with open(my_file_final, "r", encoding="utf-8", newline="") as file:
+    with open(file_datos, "r", encoding="utf-8", newline="") as file:
         data = json.load(file)
         file.close()
     for item in lista_desencriptados:
         data.append(item)
-    with open(my_file_final, "w") as file:
+    with open(file_datos, "w") as file:
         json.dump(data, file, indent=2)
         file.close()
 
