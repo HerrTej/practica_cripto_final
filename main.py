@@ -1,10 +1,14 @@
 import json
+import msvcrt
 from base64 import b64encode, b64decode
+
+import keyboard
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from pathlib import Path
 import os
 from Crypto.Hash import SHA256
+from pynput import keyboard as kb
 
 
 def borrar_archivos(file):
@@ -142,12 +146,7 @@ def desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre):
             print("Nombre mascota:", diccionario_final.get("Nombre mascota"))
             print("Especie:", diccionario_final.get("Especie"))
             print("Diagnostico:", diccionario_final.get("Diagnostico"))
-    contador_comprobante = 0
-    for item in range(48):
-        if clave_final != lista_claves[item] or nombre != lista_nombre[0]:
-            contador_comprobante += 1
-    if contador_comprobante == 48:
-        print("Nombre de usuario o contraseña incorrectos")
+            print("\n")
     try:
         with open(file_datos, "x", encoding="utf-8", newline="") as file:
             data = []
@@ -164,6 +163,14 @@ def desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre):
         with open(file_datos, "w") as file:
             json.dump(data, file, indent=2)
             file.close()
+    contador_comprobante = 0
+
+    for item in range(48):
+        if clave_final != lista_claves[item] or nombre != lista_nombre[0]:
+            contador_comprobante += 1
+    if contador_comprobante == 48:
+        print("Nombre de usuario o contraseña incorrectos\n")
+
 
 
 my_file_keys = str(Path.home()) + "/PyCharmProjects/practica_cripto_final/keys.json"
@@ -181,6 +188,26 @@ clave_final = hash_inicial.hexdigest()
 borrar_archivos(my_file_encriptada)
 encriptar(file_datos, my_file_encriptada)
 borrar_archivos(file_datos)
-desencriptar(my_file_encriptada, my_file_keys, clave_final,nombre)
+desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
+
+texto = input("Escriba SI para continuar y NO para salir: ").lower()
+
+while texto == 'si':
+    nombre = input("Nombre: ")
+    clave = bytes(input("Indica tu contraseña: "), "utf-8")
+    hash_inicial = SHA256.new(clave)
+    clave_final = hash_inicial.hexdigest()
+    # comprobar si las contraseña o el nombre de usuario estan bien
+    borrar_archivos(my_file_encriptada)
+    encriptar(file_datos, my_file_encriptada)
+    borrar_archivos(file_datos)
+    desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
+    texto = input("Escriba SI para continuar y NO para salir: ").lower()
 
 # desencriptar(my_file_encriptada, my_file_keys, clave_final,nombre)
+
+
+
+
+
+
