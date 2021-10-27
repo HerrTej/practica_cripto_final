@@ -244,7 +244,7 @@
   },
   {
     "Nombre": "Ignacio",
-    "Apellido": "Gomez",
+    "Apellido": "G\ufffdmez",
     "DNI": "XXXXXXXXY",
     "Nombre mascota": "Boira",
     "Especie": "Perro",
@@ -284,7 +284,7 @@
     "DNI": "XXXXXXXXY",
     "Nombre mascota": "Fred",
     "Especie": "Gato",
-    "Diagnostico": "Castracion",
+    "Diagnostico": "Castraci\ufffdn",
     "Clave": "37f55a06d1219afc35d01d390c305fa75e915090f25ff7e7ac5d011785c82e04"
   },
   {
@@ -343,7 +343,7 @@
   },
   {
     "Nombre": "Daniel",
-    "Apellido": "Hernandez",
+    "Apellido": "Hern\ufffdndez",
     "DNI": "XXXXXXXXY",
     "Nombre mascota": "Rocky",
     "Especie": "Gato",
@@ -406,7 +406,7 @@
   },
   {
     "Nombre": "Paula",
-    "Apellido": "Sanchez",
+    "Apellido": "Pe\ufffdas",
     "DNI": "XXXXXXXXY",
     "Nombre mascota": "Manchitas",
     "Especie": "Gato",
@@ -424,7 +424,7 @@
   },
   {
     "Nombre": "Eira",
-    "Apellido": "Rios",
+    "Apellido": "R\ufffdos",
     "DNI": "XXXXXXXXY",
     "Nombre mascota": "Lana",
     "Especie": "Perro",
