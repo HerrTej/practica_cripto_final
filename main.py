@@ -103,8 +103,10 @@ def desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre):
     iv_desencriptar = b64decode(iv_descirado)
     cipher_decrypt = AES.new(key_desencriptar, AES.MODE_CFB, iv=iv_desencriptar)
     lista_desencriptados = []
-
+    lista_nombre = []
+    lista_claves = []
     for diccionario_encriptado in desencriptados:
+
         nombre_encriptado = diccionario_encriptado.get("Nombre codificado")
         apellido_encriptado = diccionario_encriptado.get("Apellido codificado")
         dni_encriptado = diccionario_encriptado.get("DNI codificado")
@@ -120,7 +122,8 @@ def desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre):
         especie_descifrado = cipher_decrypt.decrypt(b64decode(especie_encriptado))
         diagnostico_descifrado = cipher_decrypt.decrypt(b64decode(diagnostico_encriptado))
         clave_cliente_descifrado = cipher_decrypt.decrypt(b64decode(clave_cliente_encriptado))
-
+        lista_nombre.append(nombre_descifrado.decode("utf-8"))
+        lista_claves.append(clave_cliente_descifrado.decode("utf-8"))
         diccionario_final = {
             "Nombre": nombre_descifrado.decode("utf-8"),
             "Apellido": apellido_descifrado.decode("utf-8"),
@@ -139,7 +142,12 @@ def desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre):
             print("Nombre mascota:", diccionario_final.get("Nombre mascota"))
             print("Especie:", diccionario_final.get("Especie"))
             print("Diagnostico:", diccionario_final.get("Diagnostico"))
-
+    contador_comprobante = 0
+    for item in range(48):
+        if clave_final != lista_claves[item] or nombre != lista_nombre[0]:
+            contador_comprobante += 1
+    if contador_comprobante == 48:
+        print("Nombre de usuario o contraseña incorrectos")
     try:
         with open(file_datos, "x", encoding="utf-8", newline="") as file:
             data = []
@@ -169,8 +177,10 @@ nombre = input("Nombre: ")
 clave = bytes(input("Indica tu contraseña: "), "utf-8")
 hash_inicial = SHA256.new(clave)
 clave_final = hash_inicial.hexdigest()
-
+# comprobar si las contraseña o el nombre de usuario estan bien
 borrar_archivos(my_file_encriptada)
 encriptar(file_datos, my_file_encriptada)
 borrar_archivos(file_datos)
 desencriptar(my_file_encriptada, my_file_keys, clave_final,nombre)
+
+# desencriptar(my_file_encriptada, my_file_keys, clave_final,nombre)
