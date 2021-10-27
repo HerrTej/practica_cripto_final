@@ -1,2 +1,7 @@
-print("Escriba", '\033[91m' + 'SI' , '\u001b[0'+ " para continuar y", '\033[91m' + 'NO' + '\u001b[0' + " para salir")
-print("Escriba SI para continuar y NO para salir")
+from Crypto.Hash import SHA256
+
+nombre = input("Nombre: ")
+clave = bytes(input("Indica tu contraseña: "), "utf-8")
+hash_inicial = SHA256.new(clave)
+clave_final = hash_inicial.hexdigest()
+print(clave_final)
