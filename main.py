@@ -1,19 +1,21 @@
 import json
+import os
 from base64 import b64encode, b64decode
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
-from pathlib import Path
-import os
 from Crypto.Hash import SHA256
 
 
+# funcion para borrar los archivos
 def borrar_archivos(file):
     if os.path.exists(file):
         os.remove(file)
 
-#
-def encriptar_veterinarios(veterinarios, my_file_encriptada_veterinarios):
-    with open(veterinarios, "r", encoding="utf-8", newline="") as file:
+
+# encriptar base datos trabajadores
+def encriptar_veterinarios(file_datos_veterinarios):
+    # leer archivo
+    with open(file_datos_veterinarios, "r", encoding="utf-8", newline="") as file:
         resultado_veterinarios = json.load(file)
         file.close()
 
@@ -52,32 +54,36 @@ def encriptar_veterinarios(veterinarios, my_file_encriptada_veterinarios):
 
         lista_encriptados_veterinarios.append(diccionario_final_veterinarios)
 
-    # guardar los datos
+    # guardar en un archivo los datos
     try:
-        with open(my_file_encriptada_veterinarios, "x", encoding="utf-8", newline="") as file:
-            data = []
+        with open(my_file_encriptada_veterinarios, "x", encoding="utf-8", newline="") as file_veterinario_encriptada:
+            data_encriptar_veterinarios = []
             for item in lista_encriptados_veterinarios:
-                data.append(item)
-            json.dump(data, file, indent=2)
-            file.close()
+                data_encriptar_veterinarios.append(item)
+            json.dump(data_encriptar_veterinarios, file_veterinario_encriptada, indent=2)
+            file_veterinario_encriptada.close()
     except FileExistsError:
-        with open(my_file_encriptada_veterinarios, "r", encoding="utf-8", newline="") as file:
-            data = json.load(file)
-            file.close()
+        # leer archivo
+        with open(my_file_encriptada_veterinarios, "r", encoding="utf-8", newline="") as file_veterinario_encriptada:
+            data_encriptar_veterinarios = json.load(file_veterinario_encriptada)
+            file_veterinario_encriptada.close()
         for item in lista_encriptados_veterinarios:
-            data.append(item)
-        with open(my_file_encriptada_veterinarios, "w") as file:
-            json.dump(data, file, indent=2)
-            file.close()
+            data_encriptar_veterinarios.append(item)
+        with open(my_file_encriptada_veterinarios, "w") as file_veterinario_encriptada:
+            json.dump(data_encriptar_veterinarios, file_veterinario_encriptada, indent=2)
+            file_veterinario_encriptada.close()
 
-def desencriptar_veterinarios(my_file_encriptada_veterinarios, my_file_keys_veterinarios, clave_final, nombre):
-    with open(my_file_encriptada_veterinarios, "r", encoding="utf-8", newline="") as file:
-        desencriptados_veterinarios = json.load(file)
-        file.close()
 
-    with open(my_file_keys_veterinarios, "r", encoding="utf-8", newline="") as file:
-        claves_veterinarios = json.load(file)
-        file.close()
+# desencriptar base datos trabajadores
+def desencriptar_veterinario(my_file_encriptada_veterinarios, clave_final_veterinario, nombre_veterinario):
+    # leer archivo
+    with open(my_file_encriptada_veterinarios, "r", encoding="utf-8", newline="") as file_leer:
+        desencriptados_veterinarios = json.load(file_leer)
+        file_leer.close()
+    # leer archivo
+    with open(my_file_keys_veterinarios, "r", encoding="utf-8", newline="") as file_key_veterinarios:
+        claves_veterinarios = json.load(file_key_veterinarios)
+        file_key_veterinarios.close()
 
     key_descifrado = claves_veterinarios.get("Key")
     iv_descirado = claves_veterinarios.get("Cipher_encrypt.iv")
@@ -87,6 +93,7 @@ def desencriptar_veterinarios(my_file_encriptada_veterinarios, my_file_keys_vete
     lista_desencriptados = []
     lista_nombre_veterinarios = []
     lista_claves_veterinarios = []
+    contador_comprobante_veterinario = 0
     for diccionario_encriptado in desencriptados_veterinarios:
 
         nombre_veterinario_encriptado = diccionario_encriptado.get("Nombre codificado")
@@ -104,36 +111,43 @@ def desencriptar_veterinarios(my_file_encriptada_veterinarios, my_file_keys_vete
             "Identificador": identificador_veterinario_descifrado.decode("utf-8"),
             "Clave": clave_veterinario_descifrado.decode("utf-8")
         }
-        comprobante = 0
-        lista_desencriptados.append(diccionario_final)
-        if clave_final == clave_veterinario_descifrado.decode("utf-8") and nombre == nombre_veterinario_descifrado.decode("utf-8"):
-            comprobante += 1
-            return comprobante
-    try:
-        with open(file_datos_veterinarios, "x", encoding="utf-8", newline="") as file:
-            datos_veterinarios = []
-            for item in lista_desencriptados:
-                datos_veterinarios.append(item)
-            json.dump(datos_veterinarios, file, indent=2)
-            file.close()
-    except FileExistsError:
-        with open(file_datos_veterinarios, "r", encoding="utf-8", newline="") as file:
-            datos_veterinarios = json.load(file)
-            file.close()
-        for item in lista_desencriptados:
-            datos_veterinarios.append(item)
-        with open(file_datos_veterinarios, "w") as file:
-            json.dump(datos_veterinarios, file, indent=2)
-            file.close()
-    contador_comprobante_veterinario = 0
-
-    for item in range(3):
-        if clave_final != lista_claves_veterinarios[item] or nombre != lista_nombre_veterinarios[0]:
+        if clave_final_veterinario == clave_veterinario_descifrado.decode(
+                "utf-8") and nombre_veterinario == nombre_veterinario_descifrado.decode("utf-8"):
             contador_comprobante_veterinario += 1
-    if contador_comprobante_veterinario == 2:
+
+        lista_desencriptados.append(diccionario_final)
+    # guardar en un archivo los datos
+    try:
+        with open(file_datos_veterinarios, "x", encoding="utf-8", newline="") as file_veterinarios:
+            datos_veterinarios_desencriptar = []
+            for item in lista_desencriptados:
+                datos_veterinarios_desencriptar.append(item)
+            json.dump(datos_veterinarios_desencriptar, file_veterinarios, indent=2)
+            file_veterinarios.close()
+    except FileExistsError:
+        # leer archivo
+        with open(file_datos_veterinarios, "r", encoding="utf-8", newline="") as file_veterinarios:
+            datos_veterinarios_desencriptar = json.load(file_veterinarios)
+            file_veterinarios.close()
+        for item in lista_desencriptados:
+            datos_veterinarios_desencriptar.append(item)
+        with open(file_datos_veterinarios, "w") as file_veterinarios:
+            json.dump(datos_veterinarios_desencriptar, file_veterinarios, indent=2)
+            file_veterinarios.close()
+    devolver = 2
+    # if para que el trabajador pueda elegir entre ver los datos de todos
+    # los clientes o los que tengan el nombre que ellos quieran
+    if contador_comprobante_veterinario == 1:
+        return contador_comprobante_veterinario
+
+    if contador_comprobante_veterinario == 0:
         print("Nombre de usuario o contraseña incorrectos\n")
-#
-def encriptar(file_datos, my_file_encriptada):
+        return devolver
+
+
+# encriptar base datos clientes
+def encriptar(file_datos):
+    # leer archivo
     with open(file_datos, "r", encoding="utf-8", newline="") as file:
         resultado = json.load(file)
         file.close()
@@ -189,7 +203,7 @@ def encriptar(file_datos, my_file_encriptada):
 
         lista_encriptados.append(diccionario_final)
 
-    # guardar los datos
+    # guardar en un archivo los datos
     try:
         with open(my_file_encriptada, "x", encoding="utf-8", newline="") as file:
             data = []
@@ -198,6 +212,7 @@ def encriptar(file_datos, my_file_encriptada):
             json.dump(data, file, indent=2)
             file.close()
     except FileExistsError:
+        # leer archivo
         with open(my_file_encriptada, "r", encoding="utf-8", newline="") as file:
             data = json.load(file)
             file.close()
@@ -208,11 +223,13 @@ def encriptar(file_datos, my_file_encriptada):
             file.close()
 
 
+# desencriptar base datos clientes
 def desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre):
+    # leer archivo
     with open(my_file_encriptada, "r", encoding="utf-8", newline="") as file:
         desencriptados = json.load(file)
         file.close()
-
+    # leer archivo
     with open(my_file_keys, "r", encoding="utf-8", newline="") as file:
         claves = json.load(file)
         file.close()
@@ -253,7 +270,7 @@ def desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre):
             "Diagnostico": diagnostico_descifrado.decode("utf-8"),
             "Clave": clave_cliente_descifrado.decode("utf-8")
         }
-
+        # imprimir valores para el cliente
         lista_desencriptados.append(diccionario_final)
         if clave_final == clave_cliente_descifrado.decode("utf-8") and nombre == nombre_descifrado.decode("utf-8"):
             print("Tus datos son:")
@@ -263,14 +280,28 @@ def desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre):
             print("Especie:", diccionario_final.get("Especie"))
             print("Diagnostico:", diccionario_final.get("Diagnostico"))
             print("\n")
-        # if nombre == "Veterinario1" or nombre == "Veterinario2" or nombre == "Veterinario3":
-        #     print("Los datos de este cliente son:")
-        #     print("Nombre completo:", diccionario_final.get("Nombre") + " " + diccionario_final.get("Apellido"))
-        #     print("DNI:", diccionario_final.get("DNI"))
-        #     print("Nombre mascota:", diccionario_final.get("Nombre mascota"))
-        #     print("Especie:", diccionario_final.get("Especie"))
-        #     print("Diagnostico:", diccionario_final.get("Diagnostico"))
-        #     print("\n")
+        # imprimir datos nombre trabajador haya dado
+        if ((
+                nombre == "Veterinario1" or nombre == "Veterinario2" or nombre == "Veterinario3") and clave_final == nombre_descifrado.decode(
+            "utf-8")):
+            print("Los datos de este cliente son:")
+            print("Nombre completo:", diccionario_final.get("Nombre") + " " + diccionario_final.get("Apellido"))
+            print("DNI:", diccionario_final.get("DNI"))
+            print("Nombre mascota:", diccionario_final.get("Nombre mascota"))
+            print("Especie:", diccionario_final.get("Especie"))
+            print("Diagnostico:", diccionario_final.get("Diagnostico"))
+            print("\n")
+        # imprimir datos todos los clientes
+        if ((
+                nombre == "Veterinario1" or nombre == "Veterinario2" or nombre == "Veterinario3") and clave_final == "todos"):
+            print("Los datos del cliente son:")
+            print("Nombre completo:", diccionario_final.get("Nombre") + " " + diccionario_final.get("Apellido"))
+            print("DNI:", diccionario_final.get("DNI"))
+            print("Nombre mascota:", diccionario_final.get("Nombre mascota"))
+            print("Especie:", diccionario_final.get("Especie"))
+            print("Diagnostico:", diccionario_final.get("Diagnostico"))
+            print("\n")
+    # guardar en un archivo los datos
     try:
         with open(file_datos, "x", encoding="utf-8", newline="") as file:
             data = []
@@ -279,6 +310,7 @@ def desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre):
             json.dump(data, file, indent=2)
             file.close()
     except FileExistsError:
+        # leer archivo
         with open(file_datos, "r", encoding="utf-8", newline="") as file:
             data = json.load(file)
             file.close()
@@ -288,63 +320,67 @@ def desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre):
             json.dump(data, file, indent=2)
             file.close()
     contador_comprobante = 0
-
+    comprobar_nombre = 0
     for item in range(48):
         if clave_final != lista_claves[item] or nombre != lista_nombre[0]:
             contador_comprobante += 1
-    if contador_comprobante == 48:
+            comprobar_nombre = 1
+
+    if contador_comprobante == 48 and nombre != "Veterinario1" and nombre != "Veterinario2" or nombre != "Veterinario3" and comprobar_nombre != 1:
         print("Nombre de usuario o contraseña incorrectos\n")
 
 
-my_file_keys = str(Path.home()) + "/PyCharmProjects/practica_cripto_final/keys.json"
-my_file_encriptada = str(Path.home()) + "/PyCharmProjects/practica_cripto_final/base_encriptada.json"
-file_datos = str(Path.home()) + "/PyCharmProjects/practica_cripto_final/base_datos.json"
-file_datos_veterinarios = str(Path.home()) + "/PyCharmProjects/practica_cripto_final/veterinarios.json"
-my_file_keys_veterinarios = str(Path.home()) + "/PyCharmProjects/practica_cripto_final/keys_veterinarios.json"
-my_file_encriptada_veterinarios = str(Path.home()) + \
-                                  "/PyCharmProjects/practica_cripto_final/base_encriptada_veterinarios.json"
+# archivos utilizados
+my_file_keys = "keys.json"
+my_file_encriptada = "base_encriptada.json"
+file_datos = "base_datos.json"
+file_datos_veterinarios = "veterinarios.json"
+my_file_keys_veterinarios = "keys_veterinarios.json"
+my_file_encriptada_veterinarios = "base_encriptada_veterinarios.json"
 
-# claves = personaXX XX es un número del 0 al 48 incluidos
-nombre = input("Nombre: ")
-clave = bytes(input("Indica tu contraseña: "), "utf-8")
-hash_inicial = SHA256.new(clave)
-clave_final = hash_inicial.hexdigest()
-# comprobar si las contraseña o el nombre de usuario estan bien
+# ejecución del porgrama
+texto = "si"
+while texto == 'si':
 
+    nombre = input("Nombre: ")
+    clave = bytes(input("Indica tu contraseña: "), "utf-8")
+    # usar algoritmo SHA256 para hacer hash a la conmtraseña escrita por el usuario
+    hash_inicial = SHA256.new(clave)
+    clave_final = hash_inicial.hexdigest()
+    # clave vetX es es un numero del 1 al 3
+    if nombre == "Veterinario1" or nombre == "Veterinario2" or nombre == "Veterinario3":
+        comprobar = 0
+        comprobar1 = desencriptar_veterinario(my_file_encriptada_veterinarios, clave_final, nombre)
+        borrar_archivos(my_file_encriptada_veterinarios)
+        encriptar_veterinarios(file_datos_veterinarios)
+        borrar_archivos(file_datos_veterinarios)
+        if comprobar1 != 2:
+            comprobar = desencriptar_veterinario(my_file_encriptada_veterinarios, clave_final, nombre)
+            borrar_archivos(file_datos_veterinarios)
+        # preguntar si quieres ver datos todos clientes o de uno solo
+        if comprobar == 1:
+            cliente_datos = input(
+                "¿De que cliente quiere ver los datos?(escriba su nombre), si quiere ver todos, escriba todos ")
+            # imprimir dato todos los clientes
+            if cliente_datos == "todos":
+                clave_final = cliente_datos
+                desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
+                borrar_archivos(my_file_encriptada)
+                encriptar(file_datos)
+                borrar_archivos(file_datos)
+            # imprimir datos de un cliente
+            else:
+                clave_final = cliente_datos
+                desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
+                borrar_archivos(my_file_encriptada)
+                encriptar(file_datos)
+                borrar_archivos(file_datos)
 
-if nombre == "Veterinario1" or nombre == "Veterinario2" or nombre == "Veterinario3":
-    # borrar_archivos(my_file_encriptada_veterinarios)
-    # encriptar_veterinarios(file_datos_veterinarios, my_file_encriptada_veterinarios)
-    # borrar_archivos(file_datos_veterinarios)
-    desencriptar_veterinarios(my_file_encriptada_veterinarios, my_file_keys_veterinarios, clave_final, nombre)
-    # ver = desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
-    # preguntar si quieres ver datos todos clientes o de uno solo
-    # cliente_datos = input("¿De que cliente quiere ver los datos?, si quiere ver todos, escriba todos ")
-    # if cliente_datos == todos :
-    #     nombre = cliente_datos
-    #     borrar_archivos(my_file_encriptada)
-    #     encriptar(file_datos, my_file_encriptada)
-    #     borrar_archivos(file_datos)
-    #     desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
-    #añadir datos a la primera base datos?????
-
-else:
-
-    borrar_archivos(my_file_encriptada)
-    encriptar(file_datos, my_file_encriptada)
-    borrar_archivos(file_datos)
-    desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
+    else:
+        # claves = personaXX XX es un número del 0 al 48 incluidos
+        desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
+        borrar_archivos(my_file_encriptada)
+        encriptar(file_datos)
+        borrar_archivos(file_datos)
+    # repite el bucle while si el usuario pone si y cuando pone no se finaliza el programa
     texto = input("Escriba SI para continuar y NO para salir: ").lower()
-    while texto == 'si':
-            nombre = input("Nombre: ")
-            clave = bytes(input("Indica tu contraseña: "), "utf-8")
-            hash_inicial = SHA256.new(clave)
-            clave_final = hash_inicial.hexdigest()
-            # comprobar si las contraseña o el nombre de usuario estan bien
-            borrar_archivos(my_file_encriptada)
-            encriptar(file_datos, my_file_encriptada)
-            borrar_archivos(file_datos)
-            desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
-            texto = input("Escriba SI para continuar y NO para salir: ").lower()
-
-# desencriptar(my_file_encriptada, my_file_keys, clave_final,nombre)
