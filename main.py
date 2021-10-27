@@ -173,6 +173,7 @@ def desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre):
 
 
 
+
 my_file_keys = str(Path.home()) + "/PyCharmProjects/practica_cripto_final/keys.json"
 my_file_encriptada = str(Path.home()) + "/PyCharmProjects/practica_cripto_final/base_encriptada.json"
 file_datos = str(Path.home()) + "/PyCharmProjects/practica_cripto_final/base_datos.json"
