@@ -152,7 +152,7 @@ def encriptar(file_datos):
         resultado = json.load(file)
         file.close()
 
-    key = get_random_bytes(32)
+    key = get_random_bytes(32) #clave aleatoria
     cipher_encrypt = AES.new(key, AES.MODE_CFB)
     dicc_datos = {
         "Key": b64encode(key).decode("utf-8"),
@@ -344,7 +344,7 @@ while texto == 'si':
 
     nombre = input("Nombre: ")
     clave = bytes(input("Indica tu contraseña: "), "utf-8")
-    # usar algoritmo SHA256 para hacer hash a la conmtraseña escrita por el usuario
+    # usar algoritmo SHA256 para hacer hash a la contraseña escrita por el usuario
     hash_inicial = SHA256.new(clave)
     clave_final = hash_inicial.hexdigest()
     # clave vetX es es un numero del 1 al 3
