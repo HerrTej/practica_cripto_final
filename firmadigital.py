@@ -1,8 +1,8 @@
 import copy
 from base64 import b64encode, b64decode
-from crypto.Signature import PKCS1_v1_5
-from crypto.Hash import SHA1
-from crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
+from Crypto.Hash import SHA1
+from Crypto.PublicKey import RSA
 
 
 class FirmaDigital:

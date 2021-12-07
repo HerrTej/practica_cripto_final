@@ -1,9 +1,9 @@
 import json
 import os
 from base64 import b64encode, b64decode
-from crypto.Cipher import AES
-from crypto.Random import get_random_bytes
-from crypto.Hash import SHA256
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from Crypto.Hash import SHA256
 
 
 # funcion para borrar los archivos
