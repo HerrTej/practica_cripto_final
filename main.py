@@ -389,9 +389,9 @@ def validar(file_datos_validar,persona,nombre):
     # Assumes the data is base64 encoded to begin with
     is_verify = verifier.verify(digest, base64.b64decode(firma))
     if is_verify == True:
-        print( "El diagnostico de la Persona"+str(persona), "ha sido firmada por el Veterinario1" )
+        print( "El diagnostico de la Persona "+str(persona), "ha sido firmada por el Veterinario 1" )
     else:
-        print("El diagnostico de la Persona" + str(persona), "no ha sido firmado por el Veterinario2")
+        print("El diagnostico de la Persona " + str(persona), "no ha sido firmado por el Veterinario 2")
 
 
 
