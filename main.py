@@ -411,46 +411,7 @@ texto = "si"
 while texto == 'si':
 
     nombre = input("Nombre: ")
-    clave = bytes(input("Indica tu contraseña: "), "utf-8")
-    # usar algoritmo SHA256 para hacer hash a la contraseña escrita por el usuario
-    hash_inicial = SHA256.new(clave)
-    clave_final = hash_inicial.hexdigest()
-    # clave vetX es es un numero del 1 al 3
-    if nombre == "Veterinario1" or nombre == "Veterinario2" or nombre == "Veterinario3":
-        comprobar = 0
-        comprobar1 = desencriptar_veterinario(my_file_encriptada_veterinarios, clave_final, nombre)
-        borrar_archivos(my_file_encriptada_veterinarios)
-        encriptar_veterinarios(file_datos_veterinarios)
-        borrar_archivos(file_datos_veterinarios)
-        if comprobar1 != 2:
-            comprobar = desencriptar_veterinario(my_file_encriptada_veterinarios, clave_final, nombre)
-            borrar_archivos(file_datos_veterinarios)
-        # preguntar si quieres ver datos todos clientes o de uno solo
-        if comprobar == 1:
-            cliente_datos = input(
-                "¿De que cliente quiere ver los datos?(escriba su nombre), si quiere ver todos, escriba todos y si quiere añadir un nuevo diagnostico escriba añadir ")
-            # imprimir dato todos los clientes
-            if cliente_datos == "todos":
-                clave_final = cliente_datos
-                desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
-                borrar_archivos(my_file_encriptada)
-                encriptar(file_datos)
-                borrar_archivos(file_datos)
-            #añadir un nuevo cliente
-            elif cliente_datos == "añadir":
-                clave_final = cliente_datos
-                desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
-                borrar_archivos(my_file_encriptada)
-                new_data(file_datos)
-            # imprimir datos de un cliente
-            else:
-                clave_final = cliente_datos
-                desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
-                borrar_archivos(my_file_encriptada)
-                encriptar(file_datos)
-                borrar_archivos(file_datos)
-
-    elif nombre == "Validar":
+    if  nombre == "Validar":
         persona = int(input("Persona que quieres comprobar la firma: "))
         clave_final = "Validar"
         nombre = "Veterinario1"
@@ -458,6 +419,7 @@ while texto == 'si':
         borrar_archivos(my_file_encriptada)
         nombre = "Validar"
         validar(file_datos, persona, nombre)
+        texto = input("Escriba SI para continuar y NO para salir: ").lower()
 
     elif nombre == "Validar2":
         persona = int(input("Persona que quieres comprobar la firma: "))
@@ -467,15 +429,57 @@ while texto == 'si':
         borrar_archivos(my_file_encriptada)
         nombre = "Validar2"
         validar(file_datos, persona,nombre)
-
+        texto = input("Escriba SI para continuar y NO para salir: ").lower()
     else:
-        # claves = personaXX XX es un número del 0 al 48 incluidos
-        desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
-        borrar_archivos(my_file_encriptada)
-        encriptar(file_datos)
-        borrar_archivos(file_datos)
-    # repite el bucle while si el usuario pone si y cuando pone no se finaliza el programa
-    texto = input("Escriba SI para continuar y NO para salir: ").lower()
+        clave = bytes(input("Indica tu contraseña: "), "utf-8")
+        # usar algoritmo SHA256 para hacer hash a la contraseña escrita por el usuario
+        hash_inicial = SHA256.new(clave)
+        clave_final = hash_inicial.hexdigest()
+        # clave vetX es es un numero del 1 al 3
+        if nombre == "Veterinario1" or nombre == "Veterinario2" or nombre == "Veterinario3":
+            comprobar = 0
+            comprobar1 = desencriptar_veterinario(my_file_encriptada_veterinarios, clave_final, nombre)
+            borrar_archivos(my_file_encriptada_veterinarios)
+            encriptar_veterinarios(file_datos_veterinarios)
+            borrar_archivos(file_datos_veterinarios)
+            if comprobar1 != 2:
+                comprobar = desencriptar_veterinario(my_file_encriptada_veterinarios, clave_final, nombre)
+                borrar_archivos(file_datos_veterinarios)
+            # preguntar si quieres ver datos todos clientes o de uno solo
+            if comprobar == 1:
+                cliente_datos = input(
+                    "¿De que cliente quiere ver los datos?(escriba su nombre), si quiere ver todos, escriba todos y si quiere añadir un nuevo diagnostico escriba añadir ")
+                # imprimir dato todos los clientes
+                if cliente_datos == "todos":
+                    clave_final = cliente_datos
+                    desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
+                    borrar_archivos(my_file_encriptada)
+                    encriptar(file_datos)
+                    borrar_archivos(file_datos)
+                #añadir un nuevo cliente
+                elif cliente_datos == "añadir":
+                    clave_final = cliente_datos
+                    desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
+                    borrar_archivos(my_file_encriptada)
+                    new_data(file_datos)
+                # imprimir datos de un cliente
+                else:
+                    clave_final = cliente_datos
+                    desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
+                    borrar_archivos(my_file_encriptada)
+                    encriptar(file_datos)
+                    borrar_archivos(file_datos)
+
+
+
+        else:
+            # claves = personaXX XX es un número del 0 al 48 incluidos
+            desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
+            borrar_archivos(my_file_encriptada)
+            encriptar(file_datos)
+            borrar_archivos(file_datos)
+        # repite el bucle while si el usuario pone si y cuando pone no se finaliza el programa
+        texto = input("Escriba SI para continuar y NO para salir: ").lower()
 
 
 # XXXXXXXXY
