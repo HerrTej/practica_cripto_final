@@ -76,23 +76,7 @@ def encriptar_veterinarios(file_datos_veterinarios):
         lista_encriptados_veterinarios.append(diccionario_final_veterinarios)
 
     # guardar en un archivo los datos
-    try:
-        with open(my_file_encriptada_veterinarios, "x", encoding="utf-8", newline="") as file_veterinario_encriptada:
-            data_encriptar_veterinarios = []
-            for item in lista_encriptados_veterinarios:
-                data_encriptar_veterinarios.append(item)
-            json.dump(data_encriptar_veterinarios, file_veterinario_encriptada, indent=2)
-            file_veterinario_encriptada.close()
-    except FileExistsError:
-        # leer archivo
-        with open(my_file_encriptada_veterinarios, "r", encoding="utf-8", newline="") as file_veterinario_encriptada:
-            data_encriptar_veterinarios = json.load(file_veterinario_encriptada)
-            file_veterinario_encriptada.close()
-        for item in lista_encriptados_veterinarios:
-            data_encriptar_veterinarios.append(item)
-        with open(my_file_encriptada_veterinarios, "w") as file_veterinario_encriptada:
-            json.dump(data_encriptar_veterinarios, file_veterinario_encriptada, indent=2)
-            file_veterinario_encriptada.close()
+    write(my_file_encriptada_veterinarios,lista_encriptados_veterinarios)
 
 
 # desencriptar base datos trabajadores
@@ -138,23 +122,7 @@ def desencriptar_veterinario(my_file_encriptada_veterinarios, clave_final_veteri
 
         lista_desencriptados.append(diccionario_final)
     # guardar en un archivo los datos
-    try:
-        with open(file_datos_veterinarios, "x", encoding="utf-8", newline="") as file_veterinarios:
-            datos_veterinarios_desencriptar = []
-            for item in lista_desencriptados:
-                datos_veterinarios_desencriptar.append(item)
-            json.dump(datos_veterinarios_desencriptar, file_veterinarios, indent=2)
-            file_veterinarios.close()
-    except FileExistsError:
-        # leer archivo
-        with open(file_datos_veterinarios, "r", encoding="utf-8", newline="") as file_veterinarios:
-            datos_veterinarios_desencriptar = json.load(file_veterinarios)
-            file_veterinarios.close()
-        for item in lista_desencriptados:
-            datos_veterinarios_desencriptar.append(item)
-        with open(file_datos_veterinarios, "w") as file_veterinarios:
-            json.dump(datos_veterinarios_desencriptar, file_veterinarios, indent=2)
-            file_veterinarios.close()
+    write(file_datos_veterinarios,lista_desencriptados)
     devolver = 2
     # if para que el trabajador pueda elegir entre ver los datos de todos
     # los clientes o los que tengan el nombre que ellos quieran
@@ -373,12 +341,7 @@ def firmar(file_firmar):
         digest = SHA256.new(res_bytes)
         # Aquí para firma digital
         sign = signer.sign(digest)
-        # b64encode(sign).decode("utf-8")
         signature = b64encode(sign).decode("utf-8")
-        numero = str(contador)
-
-        # persona = "Persona" + numero
-        # signature_final = b64encode(signature).decode("utf-8")
         diccionario = {
             "Cliente": contador,
             "Firma": signature,
@@ -390,7 +353,6 @@ def firmar(file_firmar):
         json.dump(lista_diccionarios, fp1, indent=2)
         file.close()
     print("Ha añadido un diagnostico y ha sido firmado con su firma digital")
-
 
 
 def validar(file_datos_validar,persona,nombre):
