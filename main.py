@@ -393,7 +393,7 @@ def firmar(file_firmar):
 
 
 
-def validar(file_datos_validar,persona):
+def validar(file_datos_validar,persona,nombre):
     with open(file_datos_validar, "r", encoding="utf-8", newline="") as file:
         datos = json.load(file)
         file.close()
@@ -402,11 +402,15 @@ def validar(file_datos_validar,persona):
         file.close()
     encriptar(file_datos)
     borrar_archivos(file_datos)
-    public_key = open("./A/Acert.pem", "rb").read()
-    # public_key = open("./A/ac1cert.pem", "rb").read()
-    public_key2 = RSA.importKey(public_key)
-    verifier = PKCS1_v1_5.new(public_key2)
-    contador = 0
+    if nombre == "Validar":
+        public_key = open("./A/Acert.pem", "rb").read()
+        # public_key = open("./A/ac1cert.pem", "rb").read()
+        public_key2 = RSA.importKey(public_key)
+        verifier = PKCS1_v1_5.new(public_key2)
+    elif nombre == "Validar2":
+        public_key = open("./A/ac1cert.pem", "rb").read()
+        public_key2 = RSA.importKey(public_key)
+        verifier = PKCS1_v1_5.new(public_key2)
 
     for item in datos_firmas:
         if int(item.get("Cliente")) == persona:
@@ -424,6 +428,9 @@ def validar(file_datos_validar,persona):
     is_verify = verifier.verify(digest, base64.b64decode(firma))
     if is_verify == True:
         print( "El diagnostico de la Persona"+str(persona), "ha sido firmada por el Veterinario1" )
+    else:
+        print("El diagnostico de la Persona" + str(persona), "no ha sido firmado por el Veterinario2")
+
 
 
 
@@ -487,7 +494,17 @@ while texto == 'si':
         nombre = "Veterinario1"
         desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
         borrar_archivos(my_file_encriptada)
-        validar(file_datos, persona)
+        nombre = "Validar"
+        validar(file_datos, persona, nombre)
+
+    elif nombre == "Validar2":
+        persona = int(input("Persona que quieres comprobar la firma: "))
+        clave_final = "Validar"
+        nombre = "Veterinario1"
+        desencriptar(my_file_encriptada, my_file_keys, clave_final, nombre)
+        borrar_archivos(my_file_encriptada)
+        nombre = "Validar2"
+        validar(file_datos, persona,nombre)
 
     else:
         # claves = personaXX XX es un número del 0 al 48 incluidos
